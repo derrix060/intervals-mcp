@@ -19,12 +19,24 @@ This server takes the proxy approach: it fetches the official OpenAPI spec, conv
 - **Tag filtering** — Expose only the endpoints you need by including or excluding OpenAPI tags
 - **Single binary** — Built in Go, compiles to a single static binary with no runtime dependencies
 
-## Prerequisites
-
-- [Go](https://go.dev/dl/) 1.21 or later
-- An Intervals.icu account with an API key (Settings > Developer Settings)
-
 ## Installation
+
+### Homebrew (macOS and Linux)
+
+```bash
+brew tap derrix060/intervals-mcp https://github.com/derrix060/intervals-mcp
+brew install intervals-mcp
+```
+
+### With `go install`
+
+Requires [Go](https://go.dev/dl/) 1.21 or later.
+
+```bash
+go install github.com/derrix060/intervals-mcp@latest
+```
+
+This places the binary in your `$GOPATH/bin` (or `$HOME/go/bin` by default).
 
 ### From source
 
@@ -33,16 +45,6 @@ git clone https://github.com/derrix060/intervals-mcp.git
 cd intervals-mcp
 go build -o intervals-mcp .
 ```
-
-The binary is now at `./intervals-mcp`.
-
-### With `go install`
-
-```bash
-go install github.com/derrix060/intervals-mcp@latest
-```
-
-This places the binary in your `$GOPATH/bin` (or `$HOME/go/bin` by default).
 
 ## Configuration
 

@@ -1,0 +1,59 @@
+version: 2
+
+project_name: intervals-mcp
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+
+archives:
+  - format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+
+checksum:
+  name_template: 'checksums.txt'
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+
+brews:
+  - name: intervals-mcp
+    repository:
+      owner: derrix060
+      name: intervals-mcp
+      branch: main
+    directory: Formula
+    commit_author:
+      name: goreleaserbot
+      email: bot@goreleaser.com
+    commit_msg_template: "chore: update {{ .ProjectName }} formula to {{ .Tag }}"
+    homepage: "https://github.com/derrix060/intervals-mcp"
+    description: "Dynamic MCP server for the Intervals.icu API"
+    license: "MIT"
+    install: |
+      bin.install "intervals-mcp"
+    test: |
+      assert_match "INTERVALS_API_KEY", shell_output("#{bin}/intervals-mcp 2>&1", 1)
