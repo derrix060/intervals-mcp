@@ -2,7 +2,7 @@
 
 A dynamic MCP (Model Context Protocol) server for [Intervals.icu](https://intervals.icu) — the training analytics platform for cyclists, runners, and triathletes.
 
-The server reads the Intervals.icu OpenAPI specification at startup, automatically generates **144 tools** covering the entire API, and proxies tool calls to the real API. When the Intervals.icu API changes, simply restart the server to pick up the new endpoints — zero code changes required.
+The server reads the Intervals.icu OpenAPI specification at startup, automatically generates **144 tools** (as of Feb 2026) covering the entire API, and proxies tool calls to the real API. When the Intervals.icu API changes, simply restart the server to pick up the new endpoints — zero code changes required.
 
 ## Why
 
@@ -12,7 +12,7 @@ This server takes the proxy approach: it fetches the official OpenAPI spec, conv
 
 ## Benefits
 
-- **Full API coverage** — All 144 non-file-upload endpoints are available as tools, generated directly from the official spec
+- **Full API coverage** — All non-file-upload endpoints are available as tools, generated directly from the official spec
 - **Zero maintenance** — API changes are picked up on next restart with no code modifications
 - **Automatic athlete ID injection** — The `athleteId` parameter is auto-filled on every call, so the LLM never needs to ask for it
 - **Format flexibility** — Endpoints that support CSV, FIT, or other formats via `{ext}` are exposed with an optional `ext` parameter (defaults to JSON)
@@ -132,6 +132,30 @@ Exclude gear-related endpoints:
 ```bash
 INTERVALS_EXCLUDE_TAGS="Gear"
 ```
+
+## Comparison with other Intervals.icu MCP servers
+
+There are several other MCP servers for Intervals.icu. All of them define tools manually, which means they cover only a fraction of the API and require code changes whenever endpoints are added or modified.
+
+| Project | Language | Tools | Dynamic? | Last updated | Status |
+|---|---|---|---|---|---|
+| **This project** | **Go** | **144** | **Yes** | **2026-02** | **Active** |
+| [mvilanova/intervals-mcp-server](https://github.com/mvilanova/intervals-mcp-server) | Python | 6 | No | 2025-12 | Stale |
+| [like-a-freedom/rusty-intervals-mcp](https://github.com/like-a-freedom/rusty-intervals-mcp) | Rust | 57 | No | 2026-02 | Active |
+| [eddmann/intervals-icu-mcp](https://github.com/eddmann/intervals-icu-mcp) | Python | 48 | No | 2025-11 | Stale |
+| [gesteves/domestique](https://github.com/gesteves/domestique) | TypeScript | 43\* | No | 2026-02 | Active |
+| [patrikmichi/intervals-icu-mcp](https://github.com/patrikmichi/intervals-icu-mcp) | TypeScript | ~30 | No | 2026-02 | New |
+| [mrgeorgegray/intervals-icu-mcp](https://github.com/mrgeorgegray/intervals-icu-mcp) | TypeScript | 12 | No | 2025-07 | Stale |
+| [notvincent/Intervals-ICU-MCP](https://github.com/notvincent/Intervals-ICU-MCP) | TypeScript | 4 | No | 2025-10 | Stale |
+
+\* *domestique spans multiple platforms (Intervals.icu + Whoop + TrainerRoad + CORE), so not all 43 tools target Intervals.icu.*
+
+### Key differences
+
+- **Full API coverage**: The most comprehensive hardcoded server has 57 tools. This project exposes 144 — the entire API minus 2 file-upload endpoints that don't make sense for LLM tool use.
+- **Zero maintenance**: Every hardcoded server falls behind when Intervals.icu adds or changes endpoints. This project reads the official OpenAPI spec at startup, so a restart is all it takes.
+- **Tag filtering**: No other server lets you include or exclude groups of endpoints via tags.
+- **Single binary, no runtime**: Like the Rust server, this compiles to a single binary. Unlike the Python and TypeScript servers, there is no interpreter, virtual environment, or `node_modules` to manage.
 
 ## How it works
 
