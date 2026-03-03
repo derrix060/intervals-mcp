@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"net/url"
 	"strings"
@@ -13,15 +14,25 @@ import (
 	"github.com/mark3labs/mcp-go/mcp"
 )
 
+// formatValue converts a value to a string suitable for URL path/query params.
+// JSON numbers are unmarshaled as float64 in Go; large integers like 95893899
+// would format as "9.5893899e+07" with %v, breaking API URLs.
+func formatValue(v any) string {
+	if f, ok := v.(float64); ok && f == math.Trunc(f) {
+		return fmt.Sprintf("%d", int64(f))
+	}
+	return fmt.Sprintf("%v", v)
+}
+
 // operationInfo captures everything needed to proxy a single API call.
 type operationInfo struct {
-	Method          string            // HTTP method (GET, POST, etc.)
-	PathPattern     string            // e.g. "/api/v1/athlete/{id}/activities"
-	PathParams      []string          // path param names (excluding athlete ID)
-	QueryParams     []string          // query param names
-	AthleteIDParams map[string]bool   // param names that should be auto-injected
-	HasBody         bool              // whether the operation accepts a JSON body
-	HasExt          bool              // whether the path has an {ext} param
+	Method          string          // HTTP method (GET, POST, etc.)
+	PathPattern     string          // e.g. "/api/v1/athlete/{id}/activities"
+	PathParams      []string        // path param names (excluding athlete ID)
+	QueryParams     []string        // query param names
+	AthleteIDParams map[string]bool // param names that should be auto-injected
+	HasBody         bool            // whether the operation accepts a JSON body
+	HasExt          bool            // whether the path has an {ext} param
 }
 
 // makeHandler creates an MCP tool handler that proxies calls to the Intervals.icu API.
@@ -32,7 +43,7 @@ func makeHandler(info operationInfo, cfg Config, client *http.Client) func(ctx c
 		// Build the URL path by substituting path parameters.
 		path := info.PathPattern
 		for _, name := range info.PathParams {
-			val := fmt.Sprintf("%v", args[name])
+			val := formatValue(args[name])
 			path = strings.ReplaceAll(path, "{"+name+"}", val)
 		}
 
@@ -69,10 +80,10 @@ func makeHandler(info operationInfo, cfg Config, client *http.Client) func(ctx c
 			switch val := v.(type) {
 			case []any:
 				for _, item := range val {
-					q.Add(name, fmt.Sprintf("%v", item))
+					q.Add(name, formatValue(item))
 				}
 			default:
-				q.Set(name, fmt.Sprintf("%v", val))
+				q.Set(name, formatValue(val))
 			}
 		}
 
