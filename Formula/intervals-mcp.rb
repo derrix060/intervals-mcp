@@ -5,21 +5,21 @@
 class IntervalsMcp < Formula
   desc "Dynamic MCP server for the Intervals.icu API"
   homepage "https://github.com/derrix060/intervals-mcp"
-  version "1.0.0"
+  version "1.0.1"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.intel?
-      url "https://github.com/derrix060/intervals-mcp/releases/download/v1.0.0/intervals-mcp_Darwin_x86_64.tar.gz"
-      sha256 "475fe36eab2c9e4aedd583649c73213e9543ce915d177f137e5df4753b78cc58"
+      url "https://github.com/derrix060/intervals-mcp/releases/download/v1.0.1/intervals-mcp_Darwin_x86_64.tar.gz"
+      sha256 "81aadae7aa70bbd7ee1b22e356ca6b3ce20c4cd6005c0ee6a125399177d733bd"
 
       define_method(:install) do
         bin.install "intervals-mcp"
       end
     end
     if Hardware::CPU.arm?
-      url "https://github.com/derrix060/intervals-mcp/releases/download/v1.0.0/intervals-mcp_Darwin_arm64.tar.gz"
-      sha256 "a9d259e7a1f02c560c3b6360c196e9cc5221e58e555af8a28f3fdb22e80dec43"
+      url "https://github.com/derrix060/intervals-mcp/releases/download/v1.0.1/intervals-mcp_Darwin_arm64.tar.gz"
+      sha256 "5766e5ca4669044ac0e06858686e2097d4a5c29c637fd063e89d05860127a627"
 
       define_method(:install) do
         bin.install "intervals-mcp"
@@ -29,15 +29,15 @@ class IntervalsMcp < Formula
 
   on_linux do
     if Hardware::CPU.intel? && Hardware::CPU.is_64_bit?
-      url "https://github.com/derrix060/intervals-mcp/releases/download/v1.0.0/intervals-mcp_Linux_x86_64.tar.gz"
-      sha256 "bd73ce87cb6942735e386a171fdf558ad179a25d9f8b3608dd8d9fe3355b92d1"
+      url "https://github.com/derrix060/intervals-mcp/releases/download/v1.0.1/intervals-mcp_Linux_x86_64.tar.gz"
+      sha256 "92cf061fbe4ac4e5a25e4026afbb8892b9c38ab91c906f8bfa213275d6715a22"
       define_method(:install) do
         bin.install "intervals-mcp"
       end
     end
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/derrix060/intervals-mcp/releases/download/v1.0.0/intervals-mcp_Linux_arm64.tar.gz"
-      sha256 "ba21fe88e0afd4ada086cec1c2d1d0f3ea0a96fe096f171115b5b499702c8a30"
+      url "https://github.com/derrix060/intervals-mcp/releases/download/v1.0.1/intervals-mcp_Linux_arm64.tar.gz"
+      sha256 "7ef4f7f85b3be63e09bc43cfed58040cebf825252104b384802a7b6392106e5e"
       define_method(:install) do
         bin.install "intervals-mcp"
       end
